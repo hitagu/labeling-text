@@ -15,30 +15,28 @@ export default async function (req, res) {
     return;
   }
 
-  const question = req.body.question || '';
-  const context = req.body.currentContext || '';
-  if (question.trim().length === 0) {
+  const text = req.body.text || '';
+  const texts = req.body.texts;
+  if (text.trim().length === 0) {
     res.status(400).json({
       error: {
-        message: "Please enter a valid question",
+        message: "Please enter valid text",
       }
     });
     return;
   }
 
-  // use the API to generate future text from the provided input
   try {
-    const prompt = generatePrompt(question, context);
+    const prompt = generatePrompt(text, texts);
     const completion = await openai.createCompletion({
       model: "text-davinci-003",
       prompt: prompt,
       temperature: 0.6,
-      max_tokens: 100,
+      n: 3,
     });
-    const answer = completion.data.choices[0].text;
-    res.status(200).json({ result: answer, newContext: prompt + answer});
+    const answer = completion.data.choices;
+    res.status(200).json({ result: answer });  
   } catch(error) {
-    // Consider adjusting the error handling logic for your use case
     if (error.response) {
       console.error(error.response.status, error.response.data);
       res.status(error.response.status).json(error.response.data);
@@ -53,8 +51,10 @@ export default async function (req, res) {
   }
 }
 
-// create the prompt that will be given to the text generator
-function generatePrompt(question, context) {
-  const prompt = context + '\nPlease concisely answer the following question based on the information that I have provided to you, and do not answer the question if it is unrelated to my medical records: ' + question;
+function generatePrompt(text, texts) {
+  var prompt =  `Find the three strings in the list that are closest in similarity to ` + text + `. If there are less than three strings in the list, the other ones should be empty strings. The list is as follows: `;
+  for (const textVar in texts) {
+    prompt += textVar + `\n`;
+  }
   return prompt;
 }

@@ -1,0 +1,39 @@
+Report 1:
+Patient Name: Sarah Lee
+Age: 55
+Medical History: Hypertension
+Reason for Visit: Chest pain
+
+Assessment: ECG revealed evidence of prior heart attack. Prescribed medication to control blood pressure and improve blood flow.
+
+Report 2:
+Patient Name: Jack Davis
+Age: 35
+Medical History: None
+Reason for Visit: Palpitations
+
+Assessment: ECG and Holter monitor test revealed premature ventricular contractions. Prescribed beta-blockers and lifestyle modifications.
+
+Report 3:
+Patient Name: Michael Brown
+Age: 60
+Medical History: Hypertension, Diabetes
+Reason for Visit: Shortness of breath
+
+Assessment: ECG and echocardiogram revealed left ventricular hypertrophy and diastolic dysfunction. Prescribed medications and lifestyle modifications.
+
+Report 4:
+Patient Name: Emily Kim
+Age: 45
+Medical History: None
+Reason for Visit: Chest discomfort
+
+Assessment: ECG and stress test showed no significant coronary artery disease. Recommended lifestyle modifications.
+
+Report 5:
+Patient Name: Adam Smith
+Age: 70
+Medical History: Coronary artery disease, Myocardial infarction
+Reason for Visit: Fatigue
+
+Assessment: ECG and echocardiogram showed reduced left ventricular function. Adjusted medication regimen.

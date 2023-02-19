@@ -1,78 +1,56 @@
 import Head from "next/head";
 import { useState } from "react";
 import styles from "./index.module.css";
-
-// import the medical records of this user
-const recordsData = require('./records.json');
-const recordsList = recordsData.records;
+var stringSimilarity = require("string-similarity");
+var texts = [];
+var tableRows = [{text: '', match: ''}];
 
 export default function Home() {
-  const [questionInput, setQuestionInput] = useState("");
-  const [result, setResult] = useState();
+  const [textInput, setTextInput] = useState("");
 
-  // turns the list of medical records into a string that the text generator will use
-  function getMedicalRecords() {
-    var recordsString = "";
-    for (const record of recordsList) {
-      for (const data in record) {
-        recordsString += data + ": ";
-        recordsString += record[data] + "\n";
-      }
-      recordsString += "\n";
-    }
-    return recordsString;
-  }
-
-  const medicalRecords = getMedicalRecords();
-
-  // this context variable represents the message history maintained throughout the conversation
-  const [context, setContext] = useState(`You are a medical record history assistant. These are my medical records. Please memorize them: \n` + medicalRecords);
-
-  async function onSubmit(event) {
+  function onSubmit(event) {
     event.preventDefault();
-    // make a request to the API with the given question and context
-    try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ question: questionInput, currentContext: context }),
-      });
-
-      const data = await response.json();
-      if (response.status !== 200) {
-        throw data.error || new Error(`Request failed with status ${response.status}`);
-      }
-
-      setResult(data.result);
-      setContext(data.newContext);
-      setQuestionInput("");
-    } catch(error) {
-      console.error(error);
-      alert(error.message);
+    if (texts.length != 0) {
+      var matches = stringSimilarity.findBestMatch(textInput, texts);
+      console.log(matches.bestMatch.target);
+      tableRows.push({ text: textInput, match: matches.bestMatch.target });
     }
+    else tableRows[0].text = textInput;
+    texts.push(textInput);
+    setTextInput("");
   }
 
   return (
     <div>
       <Head>
-        <title>OpenAI Chatbot for Medical Records</title>
+        <title>Closest Texts Finder</title>
       </Head>
 
       <main className={styles.main}>
-        <h3>Ask questions about your medical records:</h3>
+        <h3>Provide text below:</h3>
         <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="question"
-            placeholder="Enter your question!"
-            value={questionInput}
-            onChange={(e) => setQuestionInput(e.target.value)}
-          />
-          <input type="submit" value="Answer my question" />
+          <textarea
+            name="textInput"
+            placeholder="Enter your text!"
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}>
+          </textarea>
+          <input type="submit" value="Add my text" />
         </form>
-        <div className={styles.result}>{result}</div>
+        <table name="textsTable">
+          <thead>
+            <tr>
+              <td>Text</td>
+              <td>Closest Text (from those seen so far)</td>
+            </tr>
+            {tableRows.slice(0).reverse().map((r) => (
+                      <tr>
+                          <td>{r.text}</td>
+                          <td>{r.match}</td>
+                      </tr>
+                    ))}
+          </thead>
+        </table>
       </main>
     </div>
   );
